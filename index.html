@@ -171,6 +171,16 @@
             margin-left: auto;
             margin-right: auto;
         }
+        
+        .section-subtitle-link {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #ff6b6b;
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
         .gallery-grid {
             display: grid;
@@ -191,6 +201,7 @@
             align-items: center;
             justify-content: center;
         }
+
 
         .gallery-item:hover {
             transform: scale(1.05);
@@ -271,28 +282,63 @@
             background: rgba(255, 107, 107, 0.8);
         }
 
-        .modal-image-placeholder {
-            width: 600px;
-            height: 400px;
-            background: linear-gradient(45deg, #333, #666);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            text-align: center;
-            padding: 2rem;
+        .modal-image-container {
+            width: 800px;
+            max-width: 90vw;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
-        .modal-image-placeholder h3 {
+        .modal-image {
+            width: 100%;
+            height: auto;
+            max-height: 70vh;
+            object-fit: contain;
+            display: block;
+            background: #000;
+            min-height: 400px;
+        }
+
+        .modal-image.loading {
+            background: linear-gradient(45deg, #333, #666);
+            background-size: 200% 200%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .modal-text-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            color: #fff;
+            padding: 2rem;
+            text-align: center;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-image-container:hover .modal-text-overlay {
+            transform: translateY(0);
+        }
+
+        .modal-text-overlay h3 {
             font-size: 2rem;
             margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
-        .modal-image-placeholder p {
+        .modal-text-overlay p {
             font-size: 1.1rem;
             color: #ccc;
             line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }
 
         .modal-nav {
@@ -329,6 +375,7 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 3rem;
             margin-top: 3rem;
+            margin-bottom: 1rem;
         }
 
         .service-card {
@@ -387,14 +434,25 @@
         }
 
         .about-image {
-            aspect-ratio: 1;
-            background: linear-gradient(45deg, #333, #666);
+            position: relative;
             border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ccc;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+                object-fit: cover;
+            aspect-ratio: 1;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+
 
         /* Contact Section */
         .contact {
@@ -512,9 +570,26 @@
                 gap: 1rem;
             }
 
-            .modal-image-placeholder {
-                width: 90vw;
-                height: 60vh;
+            .modal-image-container {
+                width: 95vw;
+            }
+            
+            .modal-image {
+                max-height: 60vh;
+                min-height: 300px;
+            }
+            
+            .modal-text-overlay {
+                padding: 1.5rem 1rem;
+            }
+            
+            .modal-text-overlay h3 {
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .modal-text-overlay p {
+                font-size: 1rem;
             }
 
             .modal-nav {
@@ -532,10 +607,10 @@
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <a href="#home" class="logo">KIVAR PHOTOGRAPHY</a>
+            <a href="#home" class="logo">KIVAR SHOTS</a>
             <ul class="nav-menu">
                 <li><a href="#home">Home</a></li>
-                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="./gallery.html">Gallery</a></li>
                 <li><a href="#services">Services</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
@@ -557,29 +632,32 @@
     <section id="gallery" class="gallery">
         <div class="container">
             <h2 class="section-title">Portfolio</h2>
-            <p class="section-subtitle">A showcase of our finest work across portraits, events, and commercial photography</p>
+            <p class="section-subtitle"><a href="./gallery.html" class="section-subtitle-link">View full gallery</a></p>
+            <p class="section-subtitle">A showcase of our finest work across portraits, events, and sports photography</p>
             
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <div class="gallery-placeholder">Scenic Photography</div>
+                    <img class="gallery-placeholder" src="./photos/church1.jpg">
                 </div>
                 <div class="gallery-item">
-                    <div class="gallery-placeholder">Portrait Session</div>
+                    <img class="gallery-placeholder" src="./photos/portrait2.JPG">
                 </div>
                 <div class="gallery-item">
-                    <div class="gallery-placeholder">Sports Photogrpahy</div>
+                    <img class="gallery-placeholder" src="./photos/hockey1.JPG">
                 </div>
                 <div class="gallery-item">
-                    <div class="gallery-placeholder">Fashion Shoot</div>
+                    <img class="gallery-placeholder" src="./photos/events2.JPG">
                 </div>
                 <div class="gallery-item">
                     <div class="gallery-placeholder">Family Portraits</div>
                 </div>
                 <div class="gallery-item">
-                    <div class="gallery-placeholder">Commercial Work</div>
+                    <div class="gallery-placeholder">Fashion Shoot</div>
                 </div>
-            </div>
+            </div>    
+                  
         </div>
+        
     </section>
 
     <!-- Services Section -->
@@ -601,10 +679,11 @@
                 </div>
                 <div class="service-card">
                     <div class="service-icon">🏢</div>
-                    <h3>Fashion Photography</h3>
-                    <p>Professional fashion photography for anyone and everyone to display their personal style.</p>
+                    <h3>Event Photography</h3>
+                    <p>Professional photography of events such as festivals, weddings and MDs.</p>
                 </div>
             </div>
+            <p class="section-subtitle">and more...</p>
         </div>
     </section>
 
@@ -616,10 +695,10 @@
                 <div class="about-text">
                     <p>With plenty of experience and passion for professional photography, I specialize in creating timeless images that tell compelling stories. My passion for capturing authentic moments drives everything I do.</p>
                     <p>I believe that every photograph should evoke emotion and preserve memories that last a lifetime. My approach combines technical expertise with artistic vision to deliver exceptional results for every client.</p>
-                    <p>Whether you're planning your MD, need professional headshots, or want to capture a special family moment, I'm here to create beautiful imagery that exceeds your expectations.</p>
+                    <p>Whether you're planning your MD, need professional headshots, or want to capture any special moment, I'm here to create beautiful imagery that exceeds your expectations.</p>
                 </div>
                 <div class="about-image">
-                    <div class="gallery-placeholder">Professional Photographer</div>
+                    <img src="photos/portrait.JPG" alt="Kivar - Professional Photographer">
                 </div>
             </div>
         </div>
@@ -684,12 +763,12 @@
 
         function openImageModal(imageIndex) {
             const galleryItems = [
-                { title: 'Scenic Photography', description: 'Breathtaking landscapes and natural beauty captured with artistic vision' },
-                { title: 'Portrait Session', description: 'Professional portraits that capture personality and essence' },
-                { title: 'Sports Photography', description: 'Professional sports photography for any athletes' },
-                { title: 'Fashion Shoot', description: 'Creative fashion photography with stunning results and style' },
-                { title: 'Family Portraits', description: 'Warm family moments preserved forever with love and care' },
-                { title: 'Commercial Work', description: 'High-quality commercial photography solutions for your business' }
+                { title: 'Scenic Photography', description: 'Breathtaking landscapes, locations and buildings captured with artistic vision', image: './photos/church1.jpg' },
+                { title: 'Portrait Session', description: 'Professional portraits that capture personality and essence', image: './photos/portrait2.JPG' },
+                { title: 'Sports Photography', description: 'Professional sports photography for any athletes', image: './photos/hockey1.JPG' },
+                { title: 'Event Photography', description: 'Professional photography of events such as festivals, weddings and MDs.', image: './photos/events2.JPG' },
+                /*{ title: 'Family Portraits', description: 'Warm family moments preserved forever with love and care', image: '' },
+                { title: 'Fashion Shoot', description: 'Creative fashion photography with stunning results and style', image: '' }*/
             ];
 
             const modal = document.createElement('div');
@@ -698,9 +777,12 @@
                 <div class="modal-overlay">
                     <div class="modal-content">
                         <span class="close-modal">&times;</span>
-                        <div class="modal-image-placeholder">
-                            <h3>${galleryItems[imageIndex].title}</h3>
-                            <p>${galleryItems[imageIndex].description}</p>
+                        <div class="modal-image-container">
+                            <img src="${galleryItems[imageIndex].image}" alt="${galleryItems[imageIndex].title}" class="modal-image">
+                            <div class="modal-text-overlay">
+                                <h3>${galleryItems[imageIndex].title}</h3>
+                                <p>${galleryItems[imageIndex].description}</p>
+                            </div>
                         </div>
                         <div class="modal-nav">
                             <button onclick="navigateImage(-1)">‹ Previous</button>

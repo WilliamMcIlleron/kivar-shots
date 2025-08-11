@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | Kivar Photography</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #000;
+            min-height: 100vh;
+        }
+
+        /* Navigation (same as main site) */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            color: #ff6b6b;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ff6b6b;
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover::after, .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        /* Header Section */
+        .gallery-header {
+            margin-top: 80px;
+            padding: 4rem 0 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+        }
+
+        .gallery-header h1 {
+            font-size: 3.5rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .gallery-header p {
+            font-size: 1.2rem;
+            color: #999;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Filter Navigation */
+        .filter-nav {
+            padding: 2rem 0;
+            text-align: center;
+            background: #111;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            color: #ccc;
+            border: 2px solid #333;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: #fff;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Gallery Grid */
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #222;
+            aspect-ratio: 4/3;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Gallery overlay */
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(transparent 60%, rgba(0, 0, 0, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: flex-end;
+            padding: 1.5rem;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-info {
+            color: #fff;
+        }
+
+        .gallery-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .gallery-info p {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        /* Image placeholders for demo */
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #333, #666);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Modal Styles (same as main site) */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 2rem;
+        }
+
+        .lightbox-content {
+            max-width: 95vw;
+            max-height: 95vh;
+            position: relative;
+        }
+
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            color: #ff6b6b;
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border: none;
+            font-size: 2rem;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-nav:hover {
+            background: rgba(255, 107, 107, 0.8);
+        }
+
+        .lightbox-prev {
+            left: -80px;
+        }
+
+        .lightbox-next {
+            right: -80px;
+        }
+
+        .lightbox-info {
+            position: absolute;
+            bottom: -60px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #fff;
+        }
+
+        .lightbox-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .lightbox-info p {
+            color: #ccc;
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .gallery-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 1rem;
+            }
+
+            .filter-buttons {
+                gap: 0.5rem;
+                padding: 0 1rem;
+            }
+
+            .filter-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .lightbox-nav {
+                font-size: 1.5rem;
+                padding: 0.8rem 1rem;
+            }
+
+            .lightbox-prev {
+                left: 10px;
+            }
+
+            .lightbox-next {
+                right: 10px;
+            }
+
+            .gallery-container {
+                padding: 1rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .gallery-item {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        /* Hide filtered items */
+        .gallery-item.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">KIVAR PHOTOGRAPHY</a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="gallery.html" class="active">Gallery</a></li>
+                <li><a href="index.html#services">Services</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="gallery-header">
+        <h1>Portfolio Gallery</h1>
+        <p>Explore our collection of professional photography across different styles and occasions</p>
+    </section>
+
+    <!-- Filter Navigation -->
+    <section class="filter-nav">
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All Work</button>
+            <button class="filter-btn" data-filter="scenic">Scenic</button>
+            <button class="filter-btn" data-filter="portrait">Portraits</button>
+            <button class="filter-btn" data-filter="event">Events</button>
+            <button class="filter-btn" data-filter="sport">Sport</button>
+            <button class="filter-btn" data-filter="fashion">Fashion</button>
+            <button class="filter-btn" data-filter="family">Family</button>
+            <button class="filter-btn" data-filter="commercial">Commercial</button>
+        </div>
+    </section>
+
+    <!-- Gallery Grid -->
+    <section class="gallery-container">
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Scenic Photography -->
+            <div class="gallery-item" data-category="scenic">
+                <img class="image-placeholder" src="./photos/church1.jpg">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Chapel Window</h3>
+                        <p>Scenic Photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="scenic">
+                <img class="image-placeholder" src="./photos/church2.jpg">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Chapel Shot 2</h3>
+                        <p>Scenic Photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <!--div class="gallery-item" data-category="scenic">
+                <img class="image-placeholder" src="">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Ocean Waves</h3>
+                        <p>Scenic Photography</p>
+                    </div>
+                </div>
+            </div-->
+
+            <!-- Portrait Photography -->
+            <div class="gallery-item" data-category="portrait">
+                <img class="image-placeholder" src="./photos/portrait2.JPG">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Saints Spirit Leader</h3>
+                        <p>Portrait</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="portrait">
+                <img class="image-placeholder" src="./photos/mascot.jpg">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Creative Portrait</h3>
+                        <p>Portrait</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="portrait">
+                <img class="image-placeholder" src="./photos/portrait.JPG">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Personal Portrait</h3>
+                        <p>Portrait Session</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="portrait">
+                <img class="image-placeholder" src="./photos/portrait3.JPG">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Spirit Portrait</h3>
+                        <p>Portrait Session</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Photography -->
+            <div class="gallery-item" data-category="event">
+                <img class="image-placeholder" src="./photos/events1.JPG">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Festival Moments</h3>
+                        <p>Event Photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="event">
+                <img class="image-placeholder" src="./photos/events2.JPG">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Spirit Moments</h3>
+                        <p>Event Photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- sport Photography -->
+            <div class="gallery-item" data-category="sport">
+                <img class="image-placeholder" src="./photos/hockey1.JPG">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Hockey Action Shot</h3>
+                        <p>Sport Photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <!--div class="gallery-item" data-category="sport">
+                <img class="image-placeholder" src="./photos/">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Team Meeting</h3>
+                        <p>Sport Photography</p>
+                    </div>
+                </div>
+            </div-->
+
+            <!-- Fashion Photography -->
+            <!--div class="gallery-item" data-category="fashion">
+                <img class="image-placeholder" src="">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Fashion Editorial</h3>
+                        <p>Fashion Photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="fashion">
+                <img class="image-placeholder" src="">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Style Session</h3>
+                        <p>Fashion Photography</p>
+                    </div>
+                </div>
+            </div-->
+
+            <!-- Family Photography -->
+            <!--div class="gallery-item" data-category="family">
+                <img class="image-placeholder" src="">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Family Portrait</h3>
+                        <p>Family Photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="family">
+                <img class="image-placeholder" src="">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Children's Session</h3>
+                        <p>Family Photography</p>
+                    </div>
+                </div>
+            </div-->
+
+            <!-- Commercial Photography -->
+            <!--div class="gallery-item" data-category="commercial">
+                <img class="image-placeholder" src="">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Product Shot</h3>
+                        <p>Commercial Photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="commercial">
+                <img class="image-placeholder" src="">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h3>Brand Campaign</h3>
+                        <p>Commercial Photography</p>
+                    </div>
+                </div>
+            </div-->
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox-modal" id="lightboxModal">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+            <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">&#8249;</button>
+            <img class="lightbox-image" id="lightboxImage" src="" alt="">
+            <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">&#8250;</button>
+            <div class="lightbox-info" id="lightboxInfo">
+                <h3 id="lightboxTitle"></h3>
+                <p id="lightboxCategory"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Gallery data array
+        const galleryData = [
+            { category: 'scenic', title: 'Chapel Window', image: './photos/church1.jpg' },
+            { category: 'scenic', title: 'Chapel Shot 2', image: './photos/church2.jpg' },
+            //{ category: 'scenic', title: 'Ocean Waves', image: './photos/ocean1.jpg' },
+            { category: 'portrait', title: 'Saints Spirit Leader', image: './photos/portrait2.JPG' },
+            { category: 'portrait', title: 'Creative Portrait', image: './photos/mascot.jpg' },
+            { category: 'portrait', title: 'Personal Portrait', image: './photos/portrait.JPG' },
+            { category: 'portrait', title: 'Spirit Portrait', image: './photos/portrait3.JPG' },
+            { category: 'event', title: 'Festival Moments', image: './photos/events1.JPG' },
+            { category: 'event', title: 'Spirit Moments', image: './photos/events2.JPG' },
+            { category: 'sport', title: 'Hockey Action Shot ', image: './photos/hockey1.JPG' },
+            /*{ category: 'sport', title: 'Team Meeting', image: './photos/meeting1.jpg' },
+            { category: 'fashion', title: 'Fashion Editorial', image: './photos/editorial1.jpg' },
+            { category: 'fashion', title: 'Style Session', image: './photos/style1.jpg' },
+            { category: 'family', title: 'Family Portrait', image: './photos/portrait1.jpg' },
+            { category: 'family', title: 'Children\'s Session', image: './photos/children1.jpg' },
+            { category: 'commercial', title: 'Product Shot', image: './photos/product1.jpg' },
+            { category: 'commercial', title: 'Brand Campaign', image: './photos/brand1.jpg' }*/
+        ];
+
+        let currentLightboxIndex = 0;
+        let visibleItems = [];
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                filterGallery(filter);
+            });
+        });
+
+        function filterGallery(category) {
+            const items = document.querySelectorAll('.gallery-item');
+            visibleItems = [];
+            
+            items.forEach((item, index) => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.classList.remove('hidden');
+                    visibleItems.push({element: item, index: index, data: galleryData[index]});
+                    item.style.animationDelay = (visibleItems.length * 0.1) + 's';
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+
+        // Initialize gallery
+        function initGallery() {
+            const items = document.querySelectorAll('.gallery-item');
+            items.forEach((item, index) => {
+                visibleItems.push({element: item, index: index, data: galleryData[index]});
+                
+                // Add click event for lightbox
+                item.addEventListener('click', function() {
+                    openLightbox(index);
+                });
+            });
+        }
+
+        // Lightbox functionality
+        function openLightbox(index) {
+            currentLightboxIndex = index;
+            const data = galleryData[index];
+            
+            document.getElementById('lightboxImage').src = data.image || 'data:image/svg+xml,<svg xmlns="http:/www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="100%" height="100%" fill="%23333"/><text x="50%" y="50%" text-anchor="middle" fill="%23ccc">Image Preview</text></svg>';
+            document.getElementById('lightboxTitle').textContent = data.title;
+            document.getElementById('lightboxCategory').textContent = data.category.charAt(0).toUpperCase() + data.category.slice(1) + ' Photography';
+            
+            document.getElementById('lightboxModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Add keyboard navigation
+            document.addEventListener('keydown', handleLightboxKeys);
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightboxModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.removeEventListener('keydown', handleLightboxKeys);
+        }
+
+        function navigateLightbox(direction) {
+            const totalImages = galleryData.length;
+            currentLightboxIndex = (currentLightboxIndex + direction + totalImages) % totalImages;
+            
+            const data = galleryData[currentLightboxIndex];
+            document.getElementById('lightboxImage').src = data.image || 'data:image/svg+xml,<svg xmlns="http:/www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="100%" height="100%" fill="%23333"/><text x="50%" y="50%" text-anchor="middle" fill="%23ccc">Image Preview</text></svg>';
+            document.getElementById('lightboxTitle').textContent = data.title;
+            document.getElementById('lightboxCategory').textContent = data.category.charAt(0).toUpperCase() + data.category.slice(1) + ' Photography';
+        }
+
+        function handleLightboxKeys(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            } else if (e.key === 'ArrowLeft') {
+                navigateLightbox(-1);
+            } else if (e.key === 'ArrowRight') {
+                navigateLightbox(1);
+            }
+        }
+
+        // Back to top functionality
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show/hide back to top button
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initGallery();
+            filterGallery('all'); // Show all items initially
+        });
+
+        // Close lightbox when clicking outside
+        document.getElementById('lightboxModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>
